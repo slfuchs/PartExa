@@ -3,6 +3,10 @@
 *.swp
 *.swo
 
+# log and error files
+*.log
+*.err
+
 # eclipse
 /.cproject
 /.project
