@@ -29,6 +29,9 @@ fi
 
 echo "$file"
 
+# check license header
+utilities/code-checks/check-license-header.sh $file
+
 # check formatting with clang-format
 utilities/code-checks/check-clang-format.sh $file
 
