@@ -38,12 +38,14 @@ if [[ -n $(git status --porcelain 2>/dev/null) ]]; then
   exit 1
 fi
 
+# remove error files from previous runs
+find . -type f -name "code-checks-*.err" -exec rm -f {} \;
+
 # get all files as of current commit
 relevant_files=$(git ls-tree -r --name-only HEAD 2>/dev/null)
 
-# check formatting of relevant files
+# check all relevant files
+echo "Run code checks on file(s):"
 for file in $relevant_files; do
-  if [[ $file == *.cpp || $file == *.cc || $file == *.H || $file == *.h || $file == *.hpp ]]; then
-    clang-format -style=file -i $file
-  fi
+  utilities/code-checks/run-checks-on-single-file.sh $file
 done

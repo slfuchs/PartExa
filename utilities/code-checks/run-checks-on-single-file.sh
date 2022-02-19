@@ -20,30 +20,17 @@
 ##
 ## ---------------------------------------------------------------------
 
-# get source directory
-SOURCE_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
-
-# check for correct source directory
-if [[ ! -f ${SOURCE_DIR}/CMakeLists.txt ]]; then
-  echo "This script must be run from within the git repository!"
+if [[ -f $1 ]]; then
+  file=$1
+else
+  echo "No file provided!"
   exit 1
 fi
 
-# change to source directory
-cd $SOURCE_DIR
+echo "$file"
 
-# check for uncommitted changes
-if [[ -n $(git status --porcelain 2>/dev/null) ]]; then
-  echo "The git repository contains uncommitted changes!"
-  exit 1
-fi
+# check formatting with clang-format
+utilities/code-checks/check-clang-format.sh $file
 
-# get all changed files on current branch with respect to master branch
-relevant_files=$(git diff --name-only --diff-filter=ACMR origin/master...HEAD 2>/dev/null)
-
-# check formatting of relevant files
-for file in $relevant_files; do
-  if [[ $file == *.cpp || $file == *.cc || $file == *.H || $file == *.h || $file == *.hpp ]]; then
-    clang-format -style=file -i $file
-  fi
-done
+# check for forbidden 'using namespace dealii'
+utilities/code-checks/check-dealii-namespace.sh $file
